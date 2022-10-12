@@ -21,7 +21,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/gtank/merlin v0.1.1
 	github.com/hdevalence/ed25519consensus v0.0.0-20210204194344-59a8610d2b87
-	github.com/libp2p/go-buffer-pool v0.0.2
+	github.com/libp2p/go-buffer-pool v0.1.0
 	github.com/minio/highwayhash v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.10.0
