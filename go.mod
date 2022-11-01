@@ -6,7 +6,6 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20210222182958-bd440c890782
 	github.com/Workiva/go-datastructures v1.0.53
-	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/confio/ics23/go v0.6.6
 	github.com/cosmos/iavl v0.16.0
@@ -32,6 +31,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
+	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tendermint/tm-db v0.6.4
 	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
