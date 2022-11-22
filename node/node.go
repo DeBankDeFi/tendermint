@@ -718,7 +718,7 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("blockStore: %v", err)
+	fmt.Printf("blockStore: %v\n", err)
 	stateStore := sm.NewStore(stateDB, sm.StoreOptions{
 		DiscardABCIResponses: config.Storage.DiscardABCIResponses,
 	})
@@ -735,7 +735,7 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 	logger.Info("NewNode", "ABCI proxy open err", err)
-	fmt.Printf("ABCI: %v", err)
+	fmt.Printf("ABCI: %v\n", err)
 
 	// EventBus and IndexerService must be started before the handshake because
 	// we might need to index the txs of the replayed block as this might not have happened
@@ -766,6 +766,7 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, fmt.Errorf("can't get pubkey: %w", err)
 	}
+	fmt.Printf("privValidator: %v\n", err)
 
 	// Determine whether we should attempt state sync.
 	stateSync := config.StateSync.Enable && !onlyValidatorIsUs(state, pubKey)
@@ -808,7 +809,7 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 	logger.Info("NewNode", "evidenc open err", err)
-
+	fmt.Printf("evidenc: %v\n", err)
 	// make block executor for consensus and blockchain reactors to execute blocks
 	blockExec := sm.NewBlockExecutor(
 		stateStore,
@@ -819,14 +820,14 @@ func NewNode(config *cfg.Config,
 		sm.BlockExecutorWithMetrics(smMetrics),
 	)
 	logger.Info("NewNode", "blockExec open err", err)
-
+	fmt.Printf("blockExec: %v\n", err)
 	// Make BlockchainReactor. Don't start fast sync if we're doing a state sync first.
 	bcReactor, err := createBlockchainReactor(config, state, blockExec, blockStore, fastSync && !stateSync, logger)
 	if err != nil {
 		return nil, fmt.Errorf("could not create blockchain reactor: %w", err)
 	}
 	logger.Info("NewNode", "createBlockchainReactor open err", err)
-	fmt.Printf("createBlockchainReactor: %v", err)
+	fmt.Printf("createBlockchainReactor: %v\n", err)
 	// Make ConsensusReactor. Don't enable fully if doing a state sync and/or fast sync first.
 	// FIXME We need to update metrics here, since other reactors don't have access to them.
 	if stateSync {
