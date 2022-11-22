@@ -727,12 +727,14 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("NewNode", "state open err", err)
 
 	// Create the proxyApp and establish connections to the ABCI app (consensus, mempool, query).
 	proxyApp, err := createAndStartProxyAppConns(clientCreator, logger)
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("NewNode", "ABCI proxy open err", err)
 
 	// EventBus and IndexerService must be started before the handshake because
 	// we might need to index the txs of the replayed block as this might not have happened
@@ -804,6 +806,7 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("NewNode", "evidenc open err", err)
 
 	// make block executor for consensus and blockchain reactors to execute blocks
 	blockExec := sm.NewBlockExecutor(
@@ -814,12 +817,14 @@ func NewNode(config *cfg.Config,
 		evidencePool,
 		sm.BlockExecutorWithMetrics(smMetrics),
 	)
+	logger.Info("NewNode", "blockExec open err", err)
 
 	// Make BlockchainReactor. Don't start fast sync if we're doing a state sync first.
 	bcReactor, err := createBlockchainReactor(config, state, blockExec, blockStore, fastSync && !stateSync, logger)
 	if err != nil {
 		return nil, fmt.Errorf("could not create blockchain reactor: %w", err)
 	}
+	logger.Info("NewNode", "createBlockchainReactor open err", err)
 
 	// Make ConsensusReactor. Don't enable fully if doing a state sync and/or fast sync first.
 	// FIXME We need to update metrics here, since other reactors don't have access to them.
@@ -849,6 +854,7 @@ func NewNode(config *cfg.Config,
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("NewNode", "makeNodeInfo open err", err)
 
 	// Setup Transport.
 	transport, peerFilters := createTransport(config, nodeInfo, nodeKey, proxyApp)
