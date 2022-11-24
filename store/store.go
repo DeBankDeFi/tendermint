@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/gogo/protobuf/proto"
@@ -41,16 +42,22 @@ type BlockStore struct {
 	mtx    tmsync.RWMutex
 	base   int64
 	height int64
+	ReadOnly bool
 }
 
 // NewBlockStore returns a new BlockStore with the given DB,
 // initialized to the last height that was committed to the DB.
 func NewBlockStore(db dbm.DB) *BlockStore {
 	bs := LoadBlockStoreState(db)
+	ReadOnly := false
+	if v:= os.Getenv("READONLY"); v != "" {
+		ReadOnly = true
+	}
 	return &BlockStore{
 		base:   bs.Base,
 		height: bs.Height,
 		db:     db,
+		ReadOnly: ReadOnly,
 	}
 }
 
@@ -58,6 +65,11 @@ func NewBlockStore(db dbm.DB) *BlockStore {
 func (bs *BlockStore) Base() int64 {
 	bs.mtx.RLock()
 	defer bs.mtx.RUnlock()
+	if bs.ReadOnly {
+		bsState := LoadBlockStoreState(bs.db)
+		bs.base = bsState.Base
+		bs.height = bsState.Height
+	}
 	return bs.base
 }
 
@@ -65,6 +77,11 @@ func (bs *BlockStore) Base() int64 {
 func (bs *BlockStore) Height() int64 {
 	bs.mtx.RLock()
 	defer bs.mtx.RUnlock()
+	if bs.ReadOnly {
+		bsState := LoadBlockStoreState(bs.db)
+		bs.base = bsState.Base
+		bs.height = bsState.Height
+	}
 	return bs.height
 }
 
@@ -72,6 +89,11 @@ func (bs *BlockStore) Height() int64 {
 func (bs *BlockStore) Size() int64 {
 	bs.mtx.RLock()
 	defer bs.mtx.RUnlock()
+	if bs.ReadOnly {
+		bsState := LoadBlockStoreState(bs.db)
+		bs.base = bsState.Base
+		bs.height = bsState.Height
+	}
 	if bs.height == 0 {
 		return 0
 	}

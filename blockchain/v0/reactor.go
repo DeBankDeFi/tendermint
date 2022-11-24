@@ -2,6 +2,7 @@ package v0
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"time"
 
@@ -65,9 +66,11 @@ type BlockchainReactor struct {
 func NewBlockchainReactor(state sm.State, blockExec *sm.BlockExecutor, store *store.BlockStore,
 	fastSync bool) *BlockchainReactor {
 
-	if state.LastBlockHeight != store.Height() {
-		panic(fmt.Sprintf("state (%v) and store (%v) height mismatch", state.LastBlockHeight,
-			store.Height()))
+	if v:= os.Getenv("READONLY"); v == "" {
+		if state.LastBlockHeight != store.Height() {
+			panic(fmt.Sprintf("state (%v) and store (%v) height mismatch", state.LastBlockHeight,
+				store.Height()))
+		}
 	}
 
 	requestsCh := make(chan BlockRequest, maxTotalRequesters)
